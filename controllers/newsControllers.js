@@ -2,7 +2,7 @@ const newsModels = require("../models/news");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const ManageNews = {
-  addNewFromVnexpress: async (req, res) => {
+  addNewFromVnexpress: async (request, response) => {
     try {
       const url = "https://vnexpress.net/kinh-doanh/quoc-te";
 
@@ -20,13 +20,14 @@ const ManageNews = {
               date: Date.now(),
               source: "vnexpress",
             };
-            const res = await newsModels.create(news);
+            await newsModels.create(news).catch(err => {});
           }
         });
       });
-      return res.status(200).json("complete");
     } catch (err) {
-      return res.status(500).json(err);
+      return response.status(500).json(err);
+    }finally{
+      return response.status(200).json({"detail":"complete"});
     }
   },
 };
